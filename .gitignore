@@ -1,0 +1,8 @@
+
+.env
+.DS_Store
+
+# file
+/db
+/node
+/.streamlit/secrets.toml
