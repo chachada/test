@@ -2,7 +2,7 @@ import os
 import requests
 import streamlit as st
 
-from pinecone import pinecone
+from pinecone import Pinecone
 from dotenv import load_dotenv
 from utils import print_messages
 from langchain_core.messages import ChatMessage
@@ -30,7 +30,7 @@ if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
 # Pinecone 클라이언트 구성
-pc = pinecone(api_key=api_key)
+pc = Pinecone(api_key=api_key)
 
 # Index 확인
 pc.list_indexes()
