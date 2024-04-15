@@ -157,5 +157,5 @@ if __name__ == '__main__':
         response = completion_executor.execute(request_data)
 
         msg = response
-        st.write(msg)
+        st.markdown(msg)
         st.chat_message("assistant").write(response)
