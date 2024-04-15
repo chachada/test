@@ -94,6 +94,7 @@ class CompletionExecutor:
         return full_response
 
 
+
 if __name__ == '__main__':
     user_input = st.chat_input("궁금하신 내용을 질문해 주세요.")
 
