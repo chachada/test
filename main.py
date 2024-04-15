@@ -83,7 +83,7 @@ class CompletionExecutor:
                         responses.append(response_text)
 
         # 스트림으로 받은 응답 데이터를 하나의 문자열로 합침
-        full_response = '\n'.join(responses)
+        full_response = ''.join(responses)
         return full_response
 
 
