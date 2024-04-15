@@ -71,7 +71,7 @@ class CompletionExecutor:
         }
 
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
-                           headers=headers, json=completion_request, stream=True) as r:
+                           headers=headers, json=completion_request, stream=False) as r:
             for line in r.iter_lines():
                 if line:
                     response = line.decode("utf-8")
