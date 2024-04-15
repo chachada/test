@@ -70,8 +70,9 @@ class CompletionExecutor:
             'Accept': 'text/event-stream'
         }
 
+        responses = []
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
-                           headers=headers, json=completion_request, stream=False) as r:
+                           headers=headers, json=completion_request, stream=True) as r:
             for line in r.iter_lines():
                 if line:
                     response = line.decode("utf-8")
@@ -79,7 +80,12 @@ class CompletionExecutor:
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
+                        responses.append(response_text)
                         st.chat_message("assistant").write(response_text)
+
+        # 스트림으로 받은 응답 데이터를 하나의 문자열로 합침
+        full_response = ''.join(responses)
+        return full_response
 
 
 if __name__ == '__main__':
