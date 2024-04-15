@@ -54,7 +54,6 @@ embedding = OpenAIEmbeddings()
 print_messages()
 
 
-
 class CompletionExecutor:
     def __init__(self, host, api_key, api_key_primary_val, request_id):
         self._host = host
@@ -71,7 +70,7 @@ class CompletionExecutor:
             'Accept': 'text/event-stream'
         }
 
-        responses = []
+        assistant_response = ""  # Assistant 응답을 저장할 변수
         done_received = False  # "DONE" 응답이 수신되었는지 여부를 나타내는 플래그
 
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
@@ -83,14 +82,12 @@ class CompletionExecutor:
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
-                        responses.append(response_text)
-                        if response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
-                            done_received = True  # "DONE" 응답 수신
-                            break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
+                        assistant_response = response_text  # Assistant 응답 업데이트
+                    elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
+                        done_received = True  # "DONE" 응답 수신
+                        break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
 
-        # 스트림으로 받은 응답 데이터를 하나의 문자열로 합침
-        full_response = ''.join(responses)
-        return full_response
+        return assistant_response
 
 
 if __name__ == '__main__':
@@ -154,5 +151,4 @@ if __name__ == '__main__':
 
         response = completion_executor.execute(request_data)
 
-        msg = response
-        st.chat_message("assistant").write(msg)
+        st.chat_message("assistant").write(response)
