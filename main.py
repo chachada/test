@@ -151,4 +151,4 @@ if __name__ == '__main__':
 
         response = completion_executor.execute(request_data)
 
-        st.chat_message("assistant").write_stream(response)
+        st.chat_message("assistant").write(response)
