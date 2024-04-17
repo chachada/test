@@ -101,11 +101,13 @@ class CompletionExecutor(BaseCallbackHandler):
             for line in r.iter_lines():
                 if line:
                     response = line.decode("utf-8")
-                    if response.startswith('data:{"message":{"role":"assistant","content":'):
-                        response_text = response.split('"content":"')[-1]
-                        response_text = response_text.split('"}')[0]
-                        response_text = response_text.replace('\\n', '\n')
-                        self._stream_handler.on_llm_new_token(response_text)
+                    if response.startswith('event:token'):
+                        if response.startswith('data:{"message":{"role":"assistant","content":'):
+                            response_text = response.split('"content":"')[-1]
+                            response_text = response_text.split('"}')[0]
+                            response_text = response_text.replace('\\n', '\n')
+                            self._stream_handler.on_llm_new_token(response_text)
+                    
 
     def handle_response(self, completion_request):
         self.execute(completion_request)
