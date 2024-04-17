@@ -112,7 +112,6 @@ class CompletionExecutor(BaseCallbackHandler):
                     else:
                         print("fail")
                         
-                    
 
     def handle_response(self, completion_request):
         self.execute(completion_request)
