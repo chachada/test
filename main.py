@@ -7,10 +7,9 @@ import streamlit as st
 from PIL import Image
 from pinecone import Pinecone
 from dotenv import load_dotenv
-from utils import print_messages, StreamHandler
+from utils import print_messages
 from langchain_core.messages import ChatMessage
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.callbacks.base import BaseCallbackHandler
 
 # .env 파일 로드
 load_dotenv()
@@ -179,4 +178,3 @@ if __name__ == '__main__':
         )
 
         response = completion_executor.execute(request_data)
-        
