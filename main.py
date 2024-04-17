@@ -11,6 +11,7 @@ from utils import print_messages, BaseCallbackHandler
 from langchain_core.messages import ChatMessage
 from langchain.embeddings.openai import OpenAIEmbeddings
 
+
 # .env 파일 로드
 load_dotenv()
 
