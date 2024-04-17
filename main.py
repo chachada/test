@@ -77,6 +77,11 @@ embedding = OpenAIEmbeddings()
 print_messages()
 
 
+class ChatMessage:
+    def __init__(self, role, content):
+        self.role = role
+        self.content = content
+
 class CompletionExecutor:
     def __init__(self, host, api_key, api_key_primary_val, request_id):
         self._host = host
@@ -86,11 +91,10 @@ class CompletionExecutor:
 
     def execute(self, completion_request):
         headers = {
-            'X-NCP-CLOVASTUDIO-API-KEY': self._api_key,
-            'X-NCP-APIGW-API-KEY': self._api_key_primary_val,
-            'X-NCP-CLOVASTUDIO-REQUEST-ID': self._request_id,
-            'Content-Type': 'application/json; charset=utf-8',
-            'Accept': 'text/event-stream'
+            'Authorization': f'Bearer {self._api_key}',
+            'api-key': self._api_key_primary_val,
+            'Content-Type': 'application/json',
+            'User-Agent': 'My User Agent 1.0',
         }
 
         assistant_response = ""  # Assistant 응답을 저장할 변수
@@ -106,6 +110,7 @@ class CompletionExecutor:
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
                         assistant_response = response_text  # Assistant 응답 업데이트
+                        st.chat_message("assistant").write(assistant_response)  # Assistant 응답을 실시간으로 표시
                     elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
                         done_received = True  # "DONE" 응답 수신
                         break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
@@ -173,5 +178,3 @@ if __name__ == '__main__':
         )
 
         response = completion_executor.execute(request_data)
-
-        st.chat_message("assistant").write(response)
