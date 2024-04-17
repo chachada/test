@@ -1,4 +1,6 @@
+import io
 import os
+import base64
 import requests
 import streamlit as st
 
@@ -26,7 +28,24 @@ index_name = os.environ.get('INDEX_NAME')
 
 logo_img = Image.open('basic_woomi_lynn.png')
 st.set_page_config(page_title="Woomi Lynn", page_icon=logo_img)
-st.title("Woomi Lynn chatbot", logo_img)
+# st.title("Woomi Lynn chatbot", logo_img)
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/png;base64,{image_to_base64(logo_img)}" alt="logo" width="50">
+        <h1 style="margin-bottom: 0px;"> Woomi Lynn chatbot</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# 이미지를 base64 형식으로 변환하는 함수
+def image_to_base64(image):
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
+
+
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
