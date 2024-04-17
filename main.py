@@ -40,8 +40,8 @@ st.set_page_config(page_title=" Woomi Lynn", page_icon=logo_img)
 st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
-        <img src="data:image/png;base64,{image_to_base64(logo_img)}" alt="logo" width="50">
-        <h1 style="margin-bottom: 0px;"> Woomi Lynn chatbot</h1>
+        <img src="data:image/png;base64,{image_to_base64(logo_img)}" alt="logo" width="80">
+        <h2 style="margin-bottom: 0px;"> Woomi chatbot</h2>
     </div>
     """,
     unsafe_allow_html=True
