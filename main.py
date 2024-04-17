@@ -2,6 +2,7 @@ import os
 import requests
 import streamlit as st
 
+from PIL import Image
 from pinecone import Pinecone
 from dotenv import load_dotenv
 from utils import print_messages
@@ -23,7 +24,8 @@ REQUEST_ID=os.environ.get('REQUEST_ID')
 api_key = os.environ.get('PINECONE_API_KEY')
 index_name = os.environ.get('INDEX_NAME')
 
-st.set_page_config(page_title="chatPoC", page_icon="👤")
+logo_img = Image.open('basic_woomi_lynn.png')
+st.set_page_config(page_title="chatPoC", page_icon=logo_img)
 st.title("👤 Lynn chatbot PoC")
 
 if "messages" not in st.session_state:
