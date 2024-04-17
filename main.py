@@ -104,6 +104,7 @@ class CompletionExecutor(BaseCallbackHandler):
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
+                        response_text = response.split('"data":null')[-1]
                         if not self._done_received:
                             self._stream_handler.on_llm_new_token(response_text)
                     elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
