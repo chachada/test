@@ -25,8 +25,8 @@ api_key = os.environ.get('PINECONE_API_KEY')
 index_name = os.environ.get('INDEX_NAME')
 
 logo_img = Image.open('basic_woomi_lynn.png')
-st.set_page_config(page_title="chatPoC", page_icon=logo_img)
-st.title("👤 Lynn chatbot PoC")
+st.set_page_config(page_title="Woomi Lynn", page_icon=logo_img)
+st.title("{logo_img} Woomi Lynn chatbot")
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
