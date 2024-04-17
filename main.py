@@ -109,7 +109,7 @@ class CompletionExecutor(BaseCallbackHandler):
                     elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
                         self._done_received = True
                         break
-                    print(response_text)
+            print(response_text)       
     def handle_response(self, completion_request):
         self.execute(completion_request)
 
