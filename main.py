@@ -104,7 +104,11 @@ class CompletionExecutor(BaseCallbackHandler):
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
-                        self._stream_handler(response_text)
+                        self._stream_handler.on_llm_new_token(response_text)
+
+    def handle_response(self, completion_request):
+        self.execute(completion_request)
+        
 
 if __name__ == '__main__':
     user_input = st.chat_input("궁금하신 내용을 질문해 주세요.")
