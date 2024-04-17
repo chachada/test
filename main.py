@@ -104,11 +104,15 @@ class CompletionExecutor(BaseCallbackHandler):
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
-                        self._stream_handler.on_llm_new_token(response_text)
+                        if not self._done_received:
+                            self._stream_handler.on_llm_new_token(response_text)
+                    elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
+                        self._done_received = True
+                        break
 
     def handle_response(self, completion_request):
         self.execute(completion_request)
-        
+
 
 if __name__ == '__main__':
     user_input = st.chat_input("궁금하신 내용을 질문해 주세요.")
@@ -133,7 +137,6 @@ if __name__ == '__main__':
         for result in query_result.matches:
             id = result.id
             text = result.metadata['text']  # 문서의 원본 텍스트
-            # title = result.metadata['title'] #문서의 제목
             score = result.score  # 문서의 유사도
             print(id, score)
             print("\n")
@@ -173,7 +176,3 @@ if __name__ == '__main__':
         )
 
         completion_executor.handle_response(request_data)
-
-        # msg = response.content
-        # st.write(msg)
-        # st.chat_message("assistant").write(response)
