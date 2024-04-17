@@ -26,9 +26,18 @@ REQUEST_ID=os.environ.get('REQUEST_ID')
 api_key = os.environ.get('PINECONE_API_KEY')
 index_name = os.environ.get('INDEX_NAME')
 
+
+# 이미지를 base64 형식으로 변환하는 함수
+def image_to_base64(image):
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
+
+
 logo_img = Image.open('basic_woomi_lynn.png')
 st.set_page_config(page_title="Woomi Lynn", page_icon=logo_img)
 # st.title("Woomi Lynn chatbot", logo_img)
+
 st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
@@ -38,13 +47,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# 이미지를 base64 형식으로 변환하는 함수
-def image_to_base64(image):
-    buffered = io.BytesIO()
-    image.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode()
-
 
 
 if "messages" not in st.session_state:
