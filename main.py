@@ -94,7 +94,7 @@ class CompletionExecutor:
 
 
         responses = []
-        done_received = False  # "DONE" 응답이 수신되었는지 여부를 나타내는 플래그
+        # done_received = False  # "DONE" 응답이 수신되었는지 여부를 나타내는 플래그
 
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
                            headers=headers, json=completion_request, stream=True) as r:
@@ -106,11 +106,11 @@ class CompletionExecutor:
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', ' ')  # 개행 문자 삭제
                         responses.append(response_text)
-                    elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
-                        done_received = True  # "DONE" 응답 수신
+                    # elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
+                    #     done_received = True  # "DONE" 응답 수신
 
-                    if done_received:
-                        break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
+                    # if done_received:
+                    #     break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
 
         # 스트림으로 받은 응답 데이터를 하나의 문자열로 합침
         full_response = ''.join(responses)
@@ -179,4 +179,5 @@ if __name__ == '__main__':
         response = completion_executor.execute(request_data)
 
         msg = response
+        st.write(msg)
         st.chat_message("assistant").write(response)
