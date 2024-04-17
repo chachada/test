@@ -23,7 +23,7 @@ API_KEY=os.environ.get('API_KEY')
 API_KEY_PRIMARY_VAL=os.environ.get('API_KEY_PRIMARY_VAL')
 REQUEST_ID=os.environ.get('REQUEST_ID')
 
-# pinecone 연결
+# pinecone에 연결
 api_key = os.environ.get('PINECONE_API_KEY')
 index_name = os.environ.get('INDEX_NAME')
 
@@ -33,6 +33,7 @@ def image_to_base64(image):
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
+
 
 logo_img = Image.open('basic_woomi_lynn.png')
 st.set_page_config(page_title=" Woomi Lynn", page_icon=logo_img)
@@ -76,15 +77,12 @@ embedding = OpenAIEmbeddings()
 print_messages()
 
 
-class CompletionExecutor(BaseCallbackHandler):
-    def __init__(self, host, api_key, api_key_primary_val, request_id, stream_handler):
-        super().__init__()
+class CompletionExecutor:
+    def __init__(self, host, api_key, api_key_primary_val, request_id):
         self._host = host
         self._api_key = api_key
         self._api_key_primary_val = api_key_primary_val
         self._request_id = request_id
-        self._stream_handler = stream_handler
-        self._done_received = False
 
     def execute(self, completion_request):
         headers = {
@@ -95,6 +93,10 @@ class CompletionExecutor(BaseCallbackHandler):
             'Accept': 'text/event-stream'
         }
 
+
+        # responses = []
+        # done_received = False  # "DONE" 응답이 수신되었는지 여부를 나타내는 플래그
+
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
                            headers=headers, json=completion_request, stream=True) as r:
             for line in r.iter_lines():
@@ -104,15 +106,17 @@ class CompletionExecutor(BaseCallbackHandler):
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
-                        # response_text = response_text
-                        if not self._done_received:
-                            self._stream_handler.on_llm_new_token(response_text)
-                    elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
-                        self._done_received = True
-                        break
-            print(response_text)       
-    def handle_response(self, completion_request):
-        self.execute(completion_request)
+                        st.chat_message("assistant").write(response_text)  # 개행 문자 삭제
+                        # responses.append(response_text)
+                    # elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
+                    #     done_received = True  # "DONE" 응답 수신
+
+                    # if done_received:
+                    #     break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
+
+        # 스트림으로 받은 응답 데이터를 하나의 문자열로 합침
+        # full_response = ''.join(responses)
+        # return full_response
 
 
 if __name__ == '__main__':
@@ -138,13 +142,13 @@ if __name__ == '__main__':
         for result in query_result.matches:
             id = result.id
             text = result.metadata['text']  # 문서의 원본 텍스트
+            # title = result.metadata['title'] #문서의 제목
             score = result.score  # 문서의 유사도
             print(id, score)
             print("\n")
             print(text)
             print('=' * 10)
 
-        user_input = "84B 옵션 품목을 알려줘"
         preset_text = [{"role": "system",
                         "content": " - 다음 문서에만 기반하여 질문에 대답합니다. - 문서에서 알수 없는 내용인 경우 '자세한 사항은 반드시 견본주택 및 고객센터로 확인해 주시기 바랍니다. (안내사항의 오류가 있을 시는 관계법령이 우선합니다.) ' 라고 합니다."},
                        {"role": "user",
@@ -167,15 +171,12 @@ if __name__ == '__main__':
             'seed': 0
         }
 
-        stream_handler = StreamHandler(st.empty())
-
         completion_executor = CompletionExecutor(
             host='https://clovastudio.stream.ntruss.com',
             api_key=API_KEY,
             api_key_primary_val=API_KEY_PRIMARY_VAL,
-            request_id=REQUEST_ID,
-            stream_handler=stream_handler
+            request_id=REQUEST_ID
         )
 
-        completion_executor.handle_response(request_data)
+        response = completion_executor.execute(request_data)
         
