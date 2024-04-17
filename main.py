@@ -27,14 +27,16 @@ api_key = os.environ.get('PINECONE_API_KEY')
 index_name = os.environ.get('INDEX_NAME')
 
 
-# logo 삽입_이미지 base64 형식으로 변환
+# 이미지를 base64 형식으로 변환하는 함수
 def image_to_base64(image):
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
+
 logo_img = Image.open('basic_woomi_lynn.png')
-st.set_page_config(page_title="Woomi Lynn", page_icon=logo_img)
+st.set_page_config(page_title=" Woomi Lynn", page_icon=logo_img)
+# st.title("Woomi Lynn chatbot", logo_img)
 
 st.markdown(
     f"""
@@ -53,9 +55,11 @@ if "messages" not in st.session_state:
 # Pinecone 클라이언트 구성
 pc = Pinecone(api_key=api_key)
 
-# Index 확인 및 지정
+# Index 확인
 pc.list_indexes()
+
 print(pc.list_indexes())
+
 index = pc.Index("canopy--document-uploader")
 
 model_name = 'text-embedding-ada-002'
@@ -89,7 +93,7 @@ class CompletionExecutor:
             'Accept': 'text/event-stream'
         }
 
-        responses = []
+        assistant_response = ""  # Assistant 응답을 저장할 변수
         done_received = False  # "DONE" 응답이 수신되었는지 여부를 나타내는 플래그
 
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
@@ -97,16 +101,16 @@ class CompletionExecutor:
             for line in r.iter_lines():
                 if line:
                     response = line.decode("utf-8")
-                    if response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
-                        done_received = True  # "DONE" 응답 수신
-                        break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
-                    elif response.startswith('data:{"message":{"role":"assistant","content":'):
+                    if response.startswith('data:{"message":{"role":"assistant","content":'):
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
-                        responses.append(response_text)
+                        assistant_response = response_text  # Assistant 응답 업데이트
+                    elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
+                        done_received = True  # "DONE" 응답 수신
+                        break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
 
-        return responses
+        return assistant_response
 
 
 if __name__ == '__main__':
@@ -168,8 +172,6 @@ if __name__ == '__main__':
             request_id=REQUEST_ID
         )
 
-        responses = completion_executor.execute(request_data)
+        response = completion_executor.execute(request_data)
 
-        # Assistant 응답을 st.write_stream을 사용하여 표시
-        for response in responses[:-1]:  # 마지막 "DONE" 이전까지의 응답만 표시
-            st.write_stream("assistant", response)
+        st.chat_message("assistant").write(response)
