@@ -101,7 +101,7 @@ class CompletionExecutor(BaseCallbackHandler):
             for line in r.iter_lines():
                 if line:
                     response = line.decode("utf-8")
-                    print(response)
+                    print(response.startswith)
                     if response.startswith('event:token'):
                         if response.startswith('data:{"message":{"role":"assistant","content":'):
                             response_text = response.split('"content":"')[-1]
