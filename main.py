@@ -85,6 +85,7 @@ class CompletionExecutor(BaseCallbackHandler):
         self._api_key_primary_val = api_key_primary_val
         self._request_id = request_id
         self._stream_handler = stream_handler
+        self._done_received = False
 
     def execute(self, completion_request):
         headers = {
