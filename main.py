@@ -35,7 +35,7 @@ def image_to_base64(image):
 
 
 logo_img = Image.open('basic_woomi_lynn.png')
-st.set_page_config(page_title="Woomi Lynn", page_icon=logo_img)
+st.set_page_config(page_title=" Woomi Lynn", page_icon=logo_img)
 # st.title("Woomi Lynn chatbot", logo_img)
 
 st.markdown(
