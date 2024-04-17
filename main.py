@@ -35,13 +35,13 @@ def image_to_base64(image):
 
 
 logo_img = Image.open('basic_woomi_lynn.png')
-st.set_page_config(page_title=" Woomi Lynn", page_icon=logo_img)
+st.set_page_config(page_title="   Woomi Lynn", page_icon=logo_img)
 
 st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
         <img src="data:image/png;base64,{image_to_base64(logo_img)}" alt="logo" width="80">
-        <h2 style="margin-bottom: 0px;"> Woomi chatbot</h2>
+        <h3 style="margin-bottom: 0px;"> 우미 챗봇</h3>
     </div>
     """,
     unsafe_allow_html=True
