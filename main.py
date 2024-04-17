@@ -7,7 +7,7 @@ import streamlit as st
 from PIL import Image
 from pinecone import Pinecone
 from dotenv import load_dotenv
-from utils import print_messages
+from utils import print_messages, BaseCallbackHandler
 from langchain_core.messages import ChatMessage
 from langchain.embeddings.openai import OpenAIEmbeddings
 
@@ -76,12 +76,14 @@ embedding = OpenAIEmbeddings()
 print_messages()
 
 
-class CompletionExecutor:
-    def __init__(self, host, api_key, api_key_primary_val, request_id):
+class CompletionExecutor(BaseCallbackHandler):
+    def __init__(self, host, api_key, api_key_primary_val, request_id, stream_handler):
+        super().__init__()
         self._host = host
         self._api_key = api_key
         self._api_key_primary_val = api_key_primary_val
         self._request_id = request_id
+        self._stream_handler = stream_handler
 
     def execute(self, completion_request):
         headers = {
@@ -92,9 +94,6 @@ class CompletionExecutor:
             'Accept': 'text/event-stream'
         }
 
-        assistant_response = ""  # Assistant 응답을 저장할 변수
-        done_received = False  # "DONE" 응답이 수신되었는지 여부를 나타내는 플래그
-
         with requests.post(self._host + '/testapp/v1/chat-completions/HCX-003',
                            headers=headers, json=completion_request, stream=True) as r:
             for line in r.iter_lines():
@@ -104,12 +103,10 @@ class CompletionExecutor:
                         response_text = response.split('"content":"')[-1]
                         response_text = response_text.split('"}')[0]
                         response_text = response_text.replace('\\n', '\n')
-                        assistant_response = response_text  # Assistant 응답 업데이트
-                    elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
-                        done_received = True  # "DONE" 응답 수신
-                        break  # "DONE" 응답을 받은 후에는 더 이상 응답을 처리하지 않음
+                        self._stream_handler.on_llm_new_token(response_text)
 
-        return assistant_response
+    def handle_response(self, completion_request):
+        self.execute(completion_request)
 
 
 if __name__ == '__main__':
