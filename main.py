@@ -77,9 +77,6 @@ embedding = OpenAIEmbeddings()
 print_messages()
 
 
-import requests
-from langchain.callbacks.base import BaseCallbackHandler
-
 class CompletionExecutor(BaseCallbackHandler):
     def __init__(self, host, api_key, api_key_primary_val, request_id, stream_handler):
         super().__init__()
