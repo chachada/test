@@ -41,7 +41,7 @@ st.markdown(
     f"""
     <div style="display: flex; align-items: center;">
         <img src="data:image/png;base64,{image_to_base64(logo_img)}" alt="logo" width="80">
-        <h3 style="margin-bottom: 0px;">ㅤㅤ우미 챗봇</h3>
+        <h3 style="margin-bottom: 0px;">ㅤ우미 챗봇</h3>
     </div>
     """,
     unsafe_allow_html=True
