@@ -7,9 +7,10 @@ import streamlit as st
 from PIL import Image
 from pinecone import Pinecone
 from dotenv import load_dotenv
-from utils import print_messages, BaseCallbackHandler
+from utils import print_messages, StreamHandler
 from langchain_core.messages import ChatMessage
 from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.callbacks.base import BaseCallbackHandler
 
 
 # .env 파일 로드
@@ -108,7 +109,7 @@ class CompletionExecutor(BaseCallbackHandler):
 
     def handle_response(self, completion_request):
         self.execute(completion_request)
-
+        
 
 if __name__ == '__main__':
     user_input = st.chat_input("궁금하신 내용을 질문해 주세요.")
@@ -162,13 +163,14 @@ if __name__ == '__main__':
             'seed': 0
         }
 
+        stream_handler = StreamHandler(st.empty())
+
         completion_executor = CompletionExecutor(
             host='https://clovastudio.stream.ntruss.com',
             api_key=API_KEY,
             api_key_primary_val=API_KEY_PRIMARY_VAL,
-            request_id=REQUEST_ID
+            request_id=REQUEST_ID,
+            stream_handler=stream_handler
         )
 
-        response = completion_executor.execute(request_data)
-
-        st.chat_message("assistant").write(response)
+        completion_executor.handle_response(request_data)
