@@ -23,7 +23,7 @@ API_KEY=os.environ.get('API_KEY')
 API_KEY_PRIMARY_VAL=os.environ.get('API_KEY_PRIMARY_VAL')
 REQUEST_ID=os.environ.get('REQUEST_ID')
 
-# pinecone에 연결
+# pinecone 연결
 api_key = os.environ.get('PINECONE_API_KEY')
 index_name = os.environ.get('INDEX_NAME')
 
@@ -33,7 +33,6 @@ def image_to_base64(image):
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
-
 
 logo_img = Image.open('basic_woomi_lynn.png')
 st.set_page_config(page_title=" Woomi Lynn", page_icon=logo_img)
@@ -110,7 +109,7 @@ class CompletionExecutor(BaseCallbackHandler):
                     elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
                         self._done_received = True
                         break
-
+                    print(response_text)
     def handle_response(self, completion_request):
         self.execute(completion_request)
 
@@ -177,3 +176,4 @@ if __name__ == '__main__':
         )
 
         completion_executor.handle_response(request_data)
+        
