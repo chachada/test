@@ -109,11 +109,10 @@ class CompletionExecutor(BaseCallbackHandler):
                     elif response.strip() == 'data:{"message":{"role":"assistant","content":"DONE"}}':
                         self._done_received = True
                         break
-            print(response_text)       
+            # print(response_text)       
     def handle_response(self, completion_request):
         self.execute(completion_request)
 
-print(CompletionExecutor)
 
 if __name__ == '__main__':
     user_input = st.chat_input("궁금하신 내용을 질문해 주세요.")
@@ -144,6 +143,7 @@ if __name__ == '__main__':
             print(text)
             print('=' * 10)
 
+        user_input = "84B 옵션 품목을 알려줘"
         preset_text = [{"role": "system",
                         "content": " - 다음 문서에만 기반하여 질문에 대답합니다. - 문서에서 알수 없는 내용인 경우 '자세한 사항은 반드시 견본주택 및 고객센터로 확인해 주시기 바랍니다. (안내사항의 오류가 있을 시는 관계법령이 우선합니다.) ' 라고 합니다."},
                        {"role": "user",
