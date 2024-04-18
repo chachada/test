@@ -16,5 +16,5 @@ class StreamHandler(BaseCallbackHandler):
 def print_messages():
     # 이전 대화기록 출력
     if "messages" in st.session_state and len(st.session_state["messages"]) > 0:
-        for role, chat_message in st.session_state["messages"]:
-            st.chat_message(role).write(chat_message.content)
+        for chat_message in st.session_state["messages"]:
+            st.chat_message(chat_message.role).write(chat_message.content)
